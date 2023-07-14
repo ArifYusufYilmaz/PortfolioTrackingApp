@@ -7,10 +7,13 @@ import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE )
 public interface PortfolioMapper {
     PortfolioMapper INSTANCE = Mappers.getMapper(PortfolioMapper.class);
 
     Portfolio mapPortfolioSaveDtoToPortfolio(PortfolioSaveDto portfolioSaveDto);
     PortfolioResponseDto mapPortfolioToPortfolioResponseDto(Portfolio portfolio);
+    List<PortfolioResponseDto> mapPortfolioListToPortfolioResponseDtoList(List<Portfolio> portfolioList);
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
@@ -38,11 +39,17 @@ public class PortfolioServiceImpl implements PortfolioService {
 
     @Override
     public List<PortfolioResponseDto> getAllPortfolios(Long userId) {
-        return null;
+        List<Portfolio> portfolioList = portfolioDao.findAll();
+        return PortfolioMapper.INSTANCE.mapPortfolioListToPortfolioResponseDtoList(portfolioList);
     }
 
     @Override
     public PortfolioResponseDto getPortfolio(Long id) {
-        return null;
+        //TODO check if exist
+        Optional<Portfolio> portfolio = portfolioDao.findById(id);
+        if(portfolio.isPresent() == false){
+            //TODO
+        }
+        return PortfolioMapper.INSTANCE.mapPortfolioToPortfolioResponseDto(portfolio.get());
     }
 }

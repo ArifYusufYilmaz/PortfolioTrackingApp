@@ -26,8 +26,16 @@ public class PortfolioController {
         return portfolioResponseDto; //ResponseEntity.ok(portfolioResponseDto);
 
     }
-    @GetMapping("/all")
-    public List<Portfolio> getAllPortfolios(){
+    @GetMapping("/all") // TODO users!
+    public List<PortfolioResponseDto> getAllPortfolios(){
         return null;
     }
+
+    @GetMapping("/portfolio/{id}")
+    public PortfolioResponseDto getPortfolio(@PathVariable Long id)
+    {
+        return portfolioService.getPortfolio(id);
+    }
+
+    //TODO delete,update
 }

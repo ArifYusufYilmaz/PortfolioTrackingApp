@@ -6,15 +6,14 @@ import jakarta.persistence.OneToMany;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 
 public class PortfolioSaveDto {
     private String portfolioName;
 
-    public PortfolioSaveDto(String portfolioName) {
-        this.portfolioName = portfolioName;
-    }
+    private BigDecimal portfolioAvailableCash;
 
     public String getPortfolioName() {
         return portfolioName;
@@ -22,5 +21,13 @@ public class PortfolioSaveDto {
 
     public void setPortfolioName(String portfolioName) {
         this.portfolioName = portfolioName;
+    }
+
+    public BigDecimal getPortfolioAvailableCash() {
+        return portfolioAvailableCash;
+    }
+
+    public void setPortfolioAvailableCash(BigDecimal portfolioAvailableCash) {
+        this.portfolioAvailableCash = portfolioAvailableCash;
     }
 }
