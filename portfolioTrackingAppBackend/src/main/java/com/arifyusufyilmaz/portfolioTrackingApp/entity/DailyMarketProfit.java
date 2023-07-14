@@ -22,4 +22,60 @@ public class DailyMarketProfit {
     @ManyToOne
     private Portfolio portfolio;
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getMarketTransactionDate() {
+        return marketTransactionDate;
+    }
+
+    public void setMarketTransactionDate(Date marketTransactionDate) {
+        this.marketTransactionDate = marketTransactionDate;
+    }
+
+    public BigDecimal getMarketProfitAsTurkishLira() {
+        return marketProfitAsTurkishLira;
+    }
+
+    public void setMarketProfitAsTurkishLira(BigDecimal marketProfitAsTurkishLira) {
+        this.marketProfitAsTurkishLira = marketProfitAsTurkishLira;
+    }
+
+    public BigDecimal getMarketProfitAsPercentage() {
+        return marketProfitAsPercentage;
+    }
+
+    public void setMarketProfitAsPercentage(BigDecimal marketProfitAsPercentage) {
+        this.marketProfitAsPercentage = marketProfitAsPercentage;
+    }
+
+    public BigDecimal getMarketTotalValue() {
+        return marketTotalValue;
+    }
+
+    public void setMarketTotalValue(BigDecimal marketTotalValue) {
+        this.marketTotalValue = marketTotalValue;
+    }
+
+    public FinancialAsset getFinancialAsset() {
+        return financialAsset;
+    }
+
+    public void setFinancialAsset(FinancialAsset financialAsset) {
+        this.financialAsset = financialAsset;
+    }
+
+    public Portfolio getPortfolio() {
+        return portfolio;
+    }
+
+    public void setPortfolio(Portfolio portfolio) {
+        this.portfolio = portfolio;
+    }
 }

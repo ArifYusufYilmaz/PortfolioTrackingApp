@@ -9,6 +9,8 @@ import com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts.PortfolioServi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PortfolioServiceImpl implements PortfolioService {
 
@@ -19,13 +21,28 @@ public class PortfolioServiceImpl implements PortfolioService {
     }
 
     @Override
-    public PortfolioResponseDto createPortfolio(PortfolioSaveDto portfolioSaveDto) {
+    public PortfolioResponseDto createPortfolio(Long userId,PortfolioSaveDto portfolioSaveDto) {
         if(portfolioSaveDto == null){
             // Todo throw exc.
         }
+        if(userId == null){
+
+        }
+
         Portfolio portfolio =  PortfolioMapper.INSTANCE.mapPortfolioSaveDtoToPortfolio(portfolioSaveDto);
+
         portfolioDao.save(portfolio);
         PortfolioResponseDto portfolioResponseDto = PortfolioMapper.INSTANCE.mapPortfolioToPortfolioResponseDto(portfolio);
         return portfolioResponseDto;
+    }
+
+    @Override
+    public List<PortfolioResponseDto> getAllPortfolios(Long userId) {
+        return null;
+    }
+
+    @Override
+    public PortfolioResponseDto getPortfolio(Long id) {
+        return null;
     }
 }
