@@ -8,7 +8,7 @@ public class FinancialAssetResponseDto {
     private String assetName;
     private String assetSymbol;
     private BigDecimal assetQuantity;
-    private BigDecimal assetOwningCost;
+    private BigDecimal assetCost;
     private Date assetOwningDate; //TODO
 
     public Long getId() {
@@ -43,12 +43,12 @@ public class FinancialAssetResponseDto {
         this.assetQuantity = assetQuantity;
     }
 
-    public BigDecimal getAssetOwningCost() {
-        return assetOwningCost;
+    public BigDecimal getAssetCost() {
+        return assetCost;
     }
 
-    public void setAssetOwningCost(BigDecimal assetOwningCost) {
-        this.assetOwningCost = assetOwningCost;
+    public void setAssetCost(BigDecimal assetCost) {
+        this.assetCost = assetCost;
     }
 
     public Date getAssetOwningDate() {

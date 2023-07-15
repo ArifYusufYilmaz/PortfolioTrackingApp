@@ -3,7 +3,9 @@ package com.arifyusufyilmaz.portfolioTrackingApp.service.concretes;
 import com.arifyusufyilmaz.portfolioTrackingApp.converter.FinancialAssetMapper;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.FinancialAssetResponseDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.FinancialAssetSaveDto;
+import com.arifyusufyilmaz.portfolioTrackingApp.entity.DepositFinancialAssetTransaction;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAsset;
+import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAssetTransaction;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.FinancialAssetDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.PortfolioDao;
@@ -23,7 +25,7 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
     }
 
     @Override
-    public FinancialAssetResponseDto createFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto) {
+    public FinancialAssetResponseDto buyFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto) {
         //Todo check if exist
         Optional<Portfolio> portfolio =  this.portfolioDao.findById(portfolioId);
         if(portfolio.isPresent() == false){
@@ -33,9 +35,18 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
             //TODO throw
         }
         FinancialAsset financialAsset =  FinancialAssetMapper.INSTANCE.mapFinancialAssetSaveDtoToFinancialAsset(financialAssetSaveDto);
+        financialAsset.setPortfolio(portfolio.get());
+
+        FinancialAssetTransaction financialAssetTransaction = new DepositFinancialAssetTransaction(financialAsset.getAssetSymbol(), financialAsset.getAssetQuantity(), financialAsset.getAssetCost());
+        financialAssetTransaction.generateFinancialAssetTransaction(financialAsset);
+
         return FinancialAssetMapper
                                    .INSTANCE
                                    .mapFinancialAssetToFinancialAssetResponseDto(this.financialAssetDao.save(financialAsset));
+    }
+    @Override
+    public FinancialAssetResponseDto sellFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto) {
+        return null;
     }
 
     @Override
@@ -45,4 +56,7 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
         return FinancialAssetMapper.INSTANCE.mapFinancialAssetListToFinancialAssetResponseDtoList(financialAssets);
 
     }
+
+
+    // TODO there should be some calculations! owningcost etc.
 }

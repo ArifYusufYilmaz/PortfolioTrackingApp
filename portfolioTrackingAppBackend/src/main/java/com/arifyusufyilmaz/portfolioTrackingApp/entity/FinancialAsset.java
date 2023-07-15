@@ -18,14 +18,24 @@ public class FinancialAsset {
     private String assetName;
     private String assetSymbol;
     private BigDecimal assetQuantity;
-    private BigDecimal assetOwningCost;
+    private BigDecimal assetCost;
     private Date assetOwningDate; //TODO
 
     @ManyToOne
     private Portfolio portfolio;
 
     @OneToMany(mappedBy = "financialAsset")
+    private List<FinancialAssetTransaction> transactions;
+
+    @OneToMany(mappedBy = "financialAsset")
     private List<DailyMarketProfit> dailyMarketProfits;
+
+    public void buyingFinancialAsset(){
+
+    }
+    public void sellingFinancialAsset(){
+    }
+
 
     public Long getId() {
         return id;
@@ -59,12 +69,12 @@ public class FinancialAsset {
         this.assetQuantity = assetQuantity;
     }
 
-    public BigDecimal getAssetOwningCost() {
-        return assetOwningCost;
+    public BigDecimal getAssetCost() {
+        return assetCost;
     }
 
-    public void setAssetOwningCost(BigDecimal assetOwningCost) {
-        this.assetOwningCost = assetOwningCost;
+    public void setAssetCost(BigDecimal assetCost) {
+        this.assetCost = assetCost;
     }
 
     public Date getAssetOwningDate() {

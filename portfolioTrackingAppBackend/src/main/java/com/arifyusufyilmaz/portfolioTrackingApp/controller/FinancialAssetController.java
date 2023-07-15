@@ -16,10 +16,16 @@ public class FinancialAssetController {
         this.financialAssetService = financialAssetService;
     }
 
-    @PostMapping("/financial-asset/{portfolioId}")
-    public FinancialAssetResponseDto createFinancialAsset(@PathVariable Long portfolioId, @RequestBody FinancialAssetSaveDto financialAssetSaveDto)
+    @PostMapping("/financial-asset/buy/{portfolioId}")
+    public FinancialAssetResponseDto buyFinancialAsset(@PathVariable Long portfolioId, @RequestBody FinancialAssetSaveDto financialAssetSaveDto)
     {
-        return this.financialAssetService.createFinancialAsset(portfolioId, financialAssetSaveDto);
+        return this.financialAssetService.buyFinancialAsset(portfolioId, financialAssetSaveDto);
+    }
+    @PostMapping("/financial-asset/sell/{portfolioId}")
+    public FinancialAssetResponseDto sellFinancialAsset(@PathVariable Long portfolioId, @RequestBody FinancialAssetSaveDto financialAssetSaveDto)
+    {
+        return this.financialAssetService.sellFinancialAsset(portfolioId, financialAssetSaveDto);
+
     }
     @GetMapping("/all/{portfolioId}")
     public List<FinancialAssetResponseDto> getAllFinancialAssets(@PathVariable Long portfolioId){

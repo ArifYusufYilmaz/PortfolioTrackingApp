@@ -6,7 +6,9 @@ import com.arifyusufyilmaz.portfolioTrackingApp.dto.FinancialAssetSaveDto;
 import java.util.List;
 
 public interface FinancialAssetService {
-    FinancialAssetResponseDto createFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto);
+    FinancialAssetResponseDto buyFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto);
 
     List<FinancialAssetResponseDto> getAllFinancialAssets(Long portfolioId);
+
+    FinancialAssetResponseDto sellFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto);
 }

@@ -1,7 +1,6 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,7 +13,7 @@ public class Portfolio {
     @SequenceGenerator(name ="Portfolio" ,sequenceName = "PORTFOLIO_ID_SEQ")
     private Long id;
     private String portfolioName;
-    private BigDecimal portfolioAvailableCash;
+    private BigDecimal portfolioCashBalance;
 
     @ManyToOne
     private User user;
@@ -24,6 +23,25 @@ public class Portfolio {
     @OneToMany(mappedBy = "portfolio")
     private List<DailyMarketProfit> dailyMarketProfits;
 
+    @OneToMany(mappedBy = "portfolio")
+    private List<PortfolioTransaction> transactions;
+
+    public Portfolio() {
+        this.portfolioCashBalance = BigDecimal.valueOf(0);
+    }
+
+    public BigDecimal debit(BigDecimal amount){
+        // portfoliocashbalance is null at first!
+        if (getPortfolioCashBalance().compareTo(amount) < 0) {
+            // todo throw insufficent balance
+        }
+        setPortfolioCashBalance(getPortfolioCashBalance().subtract(amount));
+        return getPortfolioCashBalance();
+    }
+    public BigDecimal credit(BigDecimal amount){
+        setPortfolioCashBalance(getPortfolioCashBalance().add(amount));
+        return  getPortfolioCashBalance();
+    }
 
     public Long getId() {
         return id;
@@ -41,12 +59,12 @@ public class Portfolio {
         this.portfolioName = portfolioName;
     }
 
-    public BigDecimal getPortfolioAvailableCash() {
-        return portfolioAvailableCash;
+    public BigDecimal getPortfolioCashBalance() {
+        return portfolioCashBalance;
     }
 
-    public void setPortfolioAvailableCash(BigDecimal portfolioAvailableCash) {
-        this.portfolioAvailableCash = portfolioAvailableCash;
+    public void setPortfolioCashBalance(BigDecimal portfolioCashBalance) {
+        this.portfolioCashBalance = portfolioCashBalance;
     }
 
     public List<FinancialAsset> getFinancialAssets() {
@@ -71,5 +89,12 @@ public class Portfolio {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    public List<PortfolioTransaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<PortfolioTransaction> transactions) {
+        this.transactions = transactions;
     }
 }

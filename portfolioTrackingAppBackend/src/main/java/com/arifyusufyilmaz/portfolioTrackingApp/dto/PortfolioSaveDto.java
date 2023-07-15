@@ -13,7 +13,6 @@ import java.util.List;
 public class PortfolioSaveDto {
     private String portfolioName;
 
-    private BigDecimal portfolioAvailableCash;
 
     public String getPortfolioName() {
         return portfolioName;
@@ -23,11 +22,5 @@ public class PortfolioSaveDto {
         this.portfolioName = portfolioName;
     }
 
-    public BigDecimal getPortfolioAvailableCash() {
-        return portfolioAvailableCash;
-    }
 
-    public void setPortfolioAvailableCash(BigDecimal portfolioAvailableCash) {
-        this.portfolioAvailableCash = portfolioAvailableCash;
-    }
 }

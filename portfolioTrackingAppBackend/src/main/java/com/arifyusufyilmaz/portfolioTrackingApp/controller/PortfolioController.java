@@ -1,5 +1,7 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.controller;
 
+import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioCreditDto;
+import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioDebitDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioResponseDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioSaveDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
@@ -20,7 +22,7 @@ public class PortfolioController {
         this.portfolioService = portfolioService;
     }
 
-    @PostMapping("/portfolio/{userId}/new")
+    @PostMapping("/portfolio/{userId}/")
     public PortfolioResponseDto createPortfolio(@PathVariable Long userId,@RequestBody PortfolioSaveDto portfolioSaveDto){
         PortfolioResponseDto portfolioResponseDto = portfolioService.createPortfolio(userId,portfolioSaveDto);
         return portfolioResponseDto; //ResponseEntity.ok(portfolioResponseDto);
@@ -38,4 +40,15 @@ public class PortfolioController {
     }
 
     //TODO delete,update
+    //TODO debit, credit
+
+    @PostMapping("/portfolio/debit/{id}")   // para çekmeyle ilgili
+    public PortfolioResponseDto debit(@PathVariable Long id, @RequestBody PortfolioDebitDto portfolioDebitDto){
+        return portfolioService.debit(id, portfolioDebitDto);
+    }
+    @PostMapping("/portfolio/credit/{id}")      // para yatırmayla ilgili
+    public PortfolioResponseDto credit(@PathVariable Long id, @RequestBody PortfolioCreditDto portfolioCreditDto) {
+        return this.portfolioService.credit(id, portfolioCreditDto);
+    }
+
 }
