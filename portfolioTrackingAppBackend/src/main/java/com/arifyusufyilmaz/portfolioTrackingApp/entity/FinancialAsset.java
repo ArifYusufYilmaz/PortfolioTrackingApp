@@ -20,8 +20,6 @@ public class FinancialAsset {
     private BigDecimal assetQuantity;
     private BigDecimal assetCost;
 
-    @Transient
-    private Queue<Map<BigDecimal, BigDecimal>> quantityCostHistory;
     private Date assetOwningDate; //TODO
 
     @ManyToOne
@@ -33,9 +31,7 @@ public class FinancialAsset {
     @OneToMany(mappedBy = "financialAsset")
     private List<DailyMarketProfit> dailyMarketProfits;
 
-    public FinancialAsset() {
-        this.quantityCostHistory = new LinkedList<>();
-    }
+
 
     public Long getId() {
         return id;
@@ -99,14 +95,6 @@ public class FinancialAsset {
 
     public void setDailyMarketProfits(List<DailyMarketProfit> dailyMarketProfits) {
         this.dailyMarketProfits = dailyMarketProfits;
-    }
-
-    public Queue<Map<BigDecimal, BigDecimal>> getQuantityCostHistory() {
-        return quantityCostHistory;
-    }
-
-    public void setQuantityCostHistory(Queue<Map<BigDecimal, BigDecimal>> quantityCostHistory) {
-        this.quantityCostHistory = quantityCostHistory;
     }
 
     public List<FinancialAssetTransaction> getTransactions() {

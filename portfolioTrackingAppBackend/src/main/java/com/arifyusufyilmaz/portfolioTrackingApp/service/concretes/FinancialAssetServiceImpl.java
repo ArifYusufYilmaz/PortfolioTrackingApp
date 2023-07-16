@@ -14,10 +14,7 @@ import com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts.FinancialAsset
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class FinancialAssetServiceImpl implements FinancialAssetService {
@@ -41,24 +38,24 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
         if(financialAssetSaveDto == null){
             //TODO throw
         }
-       /* Optional<FinancialAsset> financialAssetOpt = this.financialAssetDao.findByAssetSymbolAndPortfolio_Id(financialAssetSaveDto.getAssetSymbol(), portfolioId);
-        if (financialAssetOpt.isPresent()) { // there is already one in same portfolio.
+        Optional<FinancialAsset> financialAssetOpt = this.financialAssetDao.findByAssetSymbolAndPortfolio_Id(financialAssetSaveDto.getAssetSymbol(),portfolioId);
+        FinancialAsset financialAsset;
 
-        }else{
+        if (financialAssetOpt.isPresent()) {
+            // there is already one in same portfolio.
+            financialAsset = financialAssetOpt.get();
+        }
+        else{
+            financialAsset =  FinancialAssetMapper.INSTANCE.mapFinancialAssetSaveDtoToFinancialAsset(financialAssetSaveDto);
+            financialAsset.setPortfolio(portfolio.get());
 
-        }*/
-        FinancialAsset financialAsset =  FinancialAssetMapper.INSTANCE.mapFinancialAssetSaveDtoToFinancialAsset(financialAssetSaveDto);
-        financialAsset.setPortfolio(portfolio.get());
-
-        Map<BigDecimal, BigDecimal> quantityCostMap = new HashMap<>();
-        quantityCostMap.put(financialAssetSaveDto.getAssetQuantity(), financialAssetSaveDto.getAssetCost());
-        financialAsset.getQuantityCostHistory().offer(quantityCostMap);
-
-        System.out.println(financialAsset.getQuantityCostHistory().peek().get(financialAssetSaveDto.getAssetQuantity()));
+        }
 
         generateFinancialAssetTransaction(financialAsset, new DepositFinancialAssetTransaction(financialAssetSaveDto.getAssetSymbol(),
                 financialAssetSaveDto.getAssetQuantity(),
                 financialAssetSaveDto.getAssetCost()));
+
+        setCostAndQuantityAfterAdditionalBuying(financialAsset,financialAssetSaveDto);
 
         return FinancialAssetMapper
                                    .INSTANCE
@@ -84,11 +81,30 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
          //save could be anywhere else
         transactionDao.save(financialAssetTransaction);
     }
-    private BigDecimal calculateCost(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
-        BigDecimal oldTotalValue = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
-        BigDecimal additionalTotalValue = financialAssetSaveDto.getAssetQuantity().multiply(financialAssetSaveDto.getAssetCost());
-        BigDecimal totalValue = oldTotalValue.add(additionalTotalValue);
-        BigDecimal totalQuantity = financialAsset.getAssetQuantity().add(financialAsset.getAssetQuantity());
-        return totalValue.divide(totalQuantity);
+    private void setCostAndQuantityAfterAdditionalBuying(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
+        BigDecimal quantity =  calculateQuantityAfterAdditionalBuying(financialAsset,financialAssetSaveDto);
+        financialAsset.setAssetCost(calculateCostAfterAdditionalBuying(financialAsset,financialAssetSaveDto, quantity));
+        financialAsset.setAssetQuantity(quantity);
     }
+    private BigDecimal calculateCostAfterAdditionalBuying(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto, BigDecimal assetQuantity){
+        BigDecimal previousOwningCost = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+        BigDecimal additionalBuyingCost = financialAssetSaveDto.getAssetQuantity().multiply(financialAssetSaveDto.getAssetCost());
+        BigDecimal totalOwningCost = previousOwningCost.add(additionalBuyingCost);
+
+         return totalOwningCost.divide(assetQuantity);
+    }
+    private BigDecimal calculateQuantityAfterAdditionalBuying(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
+        return  financialAsset.getAssetQuantity().add(financialAssetSaveDto.getAssetQuantity());
+    }
+    private BigDecimal calculateCostAfterSelling(FinancialAsset financialAsset, FinancialAssetSaveDto financialAssetSaveDto){
+            // it should be sellDto
+        BigDecimal previousOwningCost = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+        BigDecimal sellingProceeds =financialAssetSaveDto.getAssetQuantity().multiply(financialAssetSaveDto.getAssetCost());
+        BigDecimal totalOwningCost = previousOwningCost.subtract(sellingProceeds);
+        
+        BigDecimal remainingNumberOfShares = financialAsset.getAssetQuantity().subtract(financialAssetSaveDto.getAssetQuantity());
+        return totalOwningCost.divide(remainingNumberOfShares);
+        // TODO : sellDto, checks (cannot smaller than available numbers etc.)
+    }
+
 }
