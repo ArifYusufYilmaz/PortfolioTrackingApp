@@ -18,6 +18,7 @@ public class DepositFinancialAssetTransaction extends FinancialAssetTransaction{
 
     @Override
     public void generateFinancialAssetTransaction(FinancialAsset financialAsset) {
-
+        BigDecimal amount = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+        financialAsset.getPortfolio().debit(amount);
     }
 }

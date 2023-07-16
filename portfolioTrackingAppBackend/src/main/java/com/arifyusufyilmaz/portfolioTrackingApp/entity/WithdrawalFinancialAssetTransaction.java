@@ -17,7 +17,8 @@ public class WithdrawalFinancialAssetTransaction extends FinancialAssetTransacti
 
     @Override
     public void generateFinancialAssetTransaction(FinancialAsset financialAsset) {
-
+        BigDecimal amount = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+        financialAsset.getPortfolio().credit(amount);
     }
 
 

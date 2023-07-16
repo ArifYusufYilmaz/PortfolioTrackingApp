@@ -25,7 +25,6 @@ public class FinancialAssetController {
     public FinancialAssetResponseDto sellFinancialAsset(@PathVariable Long portfolioId, @RequestBody FinancialAssetSaveDto financialAssetSaveDto)
     {
         return this.financialAssetService.sellFinancialAsset(portfolioId, financialAssetSaveDto);
-
     }
     @GetMapping("/all/{portfolioId}")
     public List<FinancialAssetResponseDto> getAllFinancialAssets(@PathVariable Long portfolioId){

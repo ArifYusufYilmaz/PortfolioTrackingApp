@@ -69,8 +69,8 @@ public class PortfolioServiceImpl implements PortfolioService {
         if(!portfolio.isPresent()) {
             //todo
         }
-        BigDecimal amount = portfolioDebitDto.getCashAmount();
-        generatePortfolioTransaction(amount, portfolio.get(), new WithdrawalPortfolioTransaction(amount));
+
+        generatePortfolioTransaction(portfolio.get(), new WithdrawalPortfolioTransaction(portfolioDebitDto.getCashAmount()));
 
         return PortfolioMapper.INSTANCE.mapPortfolioToPortfolioResponseDto(this.portfolioDao.save(portfolio.get()));
     }
@@ -81,12 +81,12 @@ public class PortfolioServiceImpl implements PortfolioService {
         if (!portfolio.isPresent()) {
             // todo throw
         }
-        BigDecimal amount = portfolioCreditDto.getCashAmount();
-        generatePortfolioTransaction(amount, portfolio.get(), new DepositPortfolioTransaction(amount));
+
+        generatePortfolioTransaction(portfolio.get(), new DepositPortfolioTransaction(portfolioCreditDto.getCashAmount()));
         return PortfolioMapper.INSTANCE.mapPortfolioToPortfolioResponseDto(this.portfolioDao.save(portfolio.get()));
 
     }
-    private void generatePortfolioTransaction(BigDecimal amount, Portfolio portfolio, PortfolioTransaction portfolioTransaction){
+    private void generatePortfolioTransaction(Portfolio portfolio, PortfolioTransaction portfolioTransaction){
         portfolioTransaction.generatePortfolioTransaction(portfolio);
         transactionDao.save(portfolioTransaction);
     }

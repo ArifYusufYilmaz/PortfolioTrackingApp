@@ -17,7 +17,7 @@ public class Portfolio {
 
     @ManyToOne
     private User user;
-    @OneToMany(mappedBy = "portfolio")
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     private List<FinancialAsset> financialAssets;
 
     @OneToMany(mappedBy = "portfolio")

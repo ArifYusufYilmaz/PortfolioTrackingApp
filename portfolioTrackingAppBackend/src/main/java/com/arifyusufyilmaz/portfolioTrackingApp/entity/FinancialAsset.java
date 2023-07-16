@@ -1,10 +1,10 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.entity;
 
+import com.fasterxml.jackson.annotation.ObjectIdGenerator;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name="financial_assets")
@@ -19,6 +19,9 @@ public class FinancialAsset {
     private String assetSymbol;
     private BigDecimal assetQuantity;
     private BigDecimal assetCost;
+
+    @Transient
+    private Queue<Map<BigDecimal, BigDecimal>> quantityCostHistory;
     private Date assetOwningDate; //TODO
 
     @ManyToOne
@@ -30,12 +33,9 @@ public class FinancialAsset {
     @OneToMany(mappedBy = "financialAsset")
     private List<DailyMarketProfit> dailyMarketProfits;
 
-    public void buyingFinancialAsset(){
-
+    public FinancialAsset() {
+        this.quantityCostHistory = new LinkedList<>();
     }
-    public void sellingFinancialAsset(){
-    }
-
 
     public Long getId() {
         return id;
@@ -99,5 +99,21 @@ public class FinancialAsset {
 
     public void setDailyMarketProfits(List<DailyMarketProfit> dailyMarketProfits) {
         this.dailyMarketProfits = dailyMarketProfits;
+    }
+
+    public Queue<Map<BigDecimal, BigDecimal>> getQuantityCostHistory() {
+        return quantityCostHistory;
+    }
+
+    public void setQuantityCostHistory(Queue<Map<BigDecimal, BigDecimal>> quantityCostHistory) {
+        this.quantityCostHistory = quantityCostHistory;
+    }
+
+    public List<FinancialAssetTransaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(List<FinancialAssetTransaction> transactions) {
+        this.transactions = transactions;
     }
 }
