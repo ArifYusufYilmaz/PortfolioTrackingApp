@@ -6,8 +6,8 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-@Table(name = "daily_market_profits")
-public class DailyMarketProfit {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class DailyMarketProfit {
     @Id
     @GeneratedValue(generator = "DailyMarketProfit", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "DailyMarketProfit", sequenceName = "DAILY_MARKET_PROFIT_ID_SEQ")
@@ -17,10 +17,8 @@ public class DailyMarketProfit {
     private BigDecimal marketProfitAsTurkishLira;
     private BigDecimal marketProfitAsPercentage;
     private BigDecimal marketTotalValue;
-    @ManyToOne
-    private FinancialAsset financialAsset;
-    @ManyToOne
-    private Portfolio portfolio;
+
+
 
 
     public Long getId() {
@@ -63,19 +61,5 @@ public class DailyMarketProfit {
         this.marketTotalValue = marketTotalValue;
     }
 
-    public FinancialAsset getFinancialAsset() {
-        return financialAsset;
-    }
 
-    public void setFinancialAsset(FinancialAsset financialAsset) {
-        this.financialAsset = financialAsset;
-    }
-
-    public Portfolio getPortfolio() {
-        return portfolio;
-    }
-
-    public void setPortfolio(Portfolio portfolio) {
-        this.portfolio = portfolio;
-    }
 }

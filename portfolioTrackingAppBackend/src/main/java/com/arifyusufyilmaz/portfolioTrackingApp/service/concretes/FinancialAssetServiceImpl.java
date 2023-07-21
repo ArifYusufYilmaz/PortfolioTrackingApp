@@ -3,10 +3,7 @@ package com.arifyusufyilmaz.portfolioTrackingApp.service.concretes;
 import com.arifyusufyilmaz.portfolioTrackingApp.converter.FinancialAssetMapper;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.FinancialAssetResponseDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.FinancialAssetSaveDto;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.DepositFinancialAssetTransaction;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAsset;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAssetTransaction;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
+import com.arifyusufyilmaz.portfolioTrackingApp.entity.*;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.FinancialAssetDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.PortfolioDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.TransactionDao;
@@ -32,7 +29,7 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
     public FinancialAssetResponseDto buyFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto) {
         //Todo check if exist
         Optional<Portfolio> portfolio =  this.portfolioDao.findById(portfolioId);
-        if(portfolio.isPresent() == false){
+        if(!portfolio.isPresent()){
             //TODO throw
         }
         if(financialAssetSaveDto == null){
@@ -63,7 +60,27 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
     }
     @Override
     public FinancialAssetResponseDto sellFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto) {
-        return null;
+       if(financialAssetSaveDto == null){
+           // todo throw
+       }
+       Optional<Portfolio> portfolio = this.portfolioDao.findById(portfolioId);
+       if(!portfolio.isPresent()){
+           //todo throw
+       }
+       Optional<FinancialAsset> financialAssetOpt = this.financialAssetDao.findByAssetSymbolAndPortfolio_Id(financialAssetSaveDto.getAssetSymbol(),portfolioId);
+
+       if(!financialAssetOpt.isPresent()){
+           // todo throw
+       }
+
+       generateFinancialAssetTransaction(financialAssetOpt.get(), new WithdrawalFinancialAssetTransaction(
+                                                                               financialAssetSaveDto.getAssetSymbol(),
+                                                                               financialAssetSaveDto.getAssetQuantity(),
+                                                                               financialAssetSaveDto.getAssetCost()));
+
+        setCostAndQuantityAfterSelling(financialAssetOpt.get(),financialAssetSaveDto);
+        FinancialAsset financialAsset = this.financialAssetDao.save(financialAssetOpt.get());
+        return FinancialAssetMapper.INSTANCE.mapFinancialAssetToFinancialAssetResponseDto(financialAsset);
     }
 
     @Override
@@ -96,15 +113,25 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
     private BigDecimal calculateQuantityAfterAdditionalBuying(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
         return  financialAsset.getAssetQuantity().add(financialAssetSaveDto.getAssetQuantity());
     }
-    private BigDecimal calculateCostAfterSelling(FinancialAsset financialAsset, FinancialAssetSaveDto financialAssetSaveDto){
+    private BigDecimal calculateCostAfterSelling(FinancialAsset financialAsset, FinancialAssetSaveDto financialAssetSaveDto, BigDecimal remainingQuantity){
             // it should be sellDto
         BigDecimal previousOwningCost = financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
         BigDecimal sellingProceeds =financialAssetSaveDto.getAssetQuantity().multiply(financialAssetSaveDto.getAssetCost());
         BigDecimal totalOwningCost = previousOwningCost.subtract(sellingProceeds);
         
-        BigDecimal remainingNumberOfShares = financialAsset.getAssetQuantity().subtract(financialAssetSaveDto.getAssetQuantity());
-        return totalOwningCost.divide(remainingNumberOfShares);
+        return totalOwningCost.divide(remainingQuantity);
         // TODO : sellDto, checks (cannot smaller than available numbers etc.)
+        // - values indicates profit!
     }
-
+    private BigDecimal calculateQuantityAfterSelling(FinancialAsset financialAsset, FinancialAssetSaveDto financialAssetSaveDto){
+        if(financialAsset.getAssetQuantity().compareTo(financialAssetSaveDto.getAssetQuantity()) < 0){
+            // todo throw
+        }
+        return financialAsset.getAssetQuantity().subtract(financialAssetSaveDto.getAssetQuantity());
+    }
+    private void setCostAndQuantityAfterSelling(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
+        BigDecimal quantity = calculateQuantityAfterSelling(financialAsset, financialAssetSaveDto);
+        financialAsset.setAssetCost(calculateCostAfterSelling(financialAsset, financialAssetSaveDto, quantity));
+        financialAsset.setAssetQuantity(quantity);
+    }
 }
