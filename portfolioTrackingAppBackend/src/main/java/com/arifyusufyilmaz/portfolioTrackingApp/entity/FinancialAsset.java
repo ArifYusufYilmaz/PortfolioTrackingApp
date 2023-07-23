@@ -29,7 +29,7 @@ public class FinancialAsset {
     private List<FinancialAssetTransaction> transactions;
 
     @OneToMany(mappedBy = "financialAsset")
-    private List<DailyMarketProfit> dailyMarketProfits;
+    private List<FinancialAssetDailyMarketProfit> financialAssetDailyMarketProfits;
 
 
 
@@ -89,12 +89,12 @@ public class FinancialAsset {
         this.portfolio = portfolio;
     }
 
-    public List<DailyMarketProfit> getDailyMarketProfits() {
-        return dailyMarketProfits;
+    public List<FinancialAssetDailyMarketProfit> getDailyMarketProfits() {
+        return financialAssetDailyMarketProfits;
     }
 
-    public void setDailyMarketProfits(List<DailyMarketProfit> dailyMarketProfits) {
-        this.dailyMarketProfits = dailyMarketProfits;
+    public void setDailyMarketProfits(List<FinancialAssetDailyMarketProfit> dailyMarketProfits) {
+        this.financialAssetDailyMarketProfits = dailyMarketProfits;
     }
 
     public List<FinancialAssetTransaction> getTransactions() {

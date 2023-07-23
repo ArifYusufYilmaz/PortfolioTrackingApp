@@ -12,6 +12,7 @@ import java.util.List;
 public class FinancialAssetController {
     private final FinancialAssetService financialAssetService;
 
+
     public FinancialAssetController(FinancialAssetService financialAssetService) {
         this.financialAssetService = financialAssetService;
     }

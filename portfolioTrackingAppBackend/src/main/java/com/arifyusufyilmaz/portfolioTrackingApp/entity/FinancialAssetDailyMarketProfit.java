@@ -15,6 +15,7 @@ public class FinancialAssetDailyMarketProfit extends DailyMarketProfit{
     @ManyToOne
     private FinancialAsset financialAsset;
 
+
     public BigDecimal getCurrentPrice() {
         return currentPrice;
     }

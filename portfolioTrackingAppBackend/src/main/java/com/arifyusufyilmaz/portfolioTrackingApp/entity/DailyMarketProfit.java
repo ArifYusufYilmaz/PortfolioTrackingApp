@@ -20,7 +20,6 @@ public abstract class DailyMarketProfit {
 
 
 
-
     public Long getId() {
         return id;
     }
