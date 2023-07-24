@@ -3,6 +3,7 @@ package com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos;
 
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Builder;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
