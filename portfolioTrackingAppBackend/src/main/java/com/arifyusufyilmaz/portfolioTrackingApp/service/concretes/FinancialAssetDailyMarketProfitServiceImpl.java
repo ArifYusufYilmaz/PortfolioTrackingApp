@@ -4,6 +4,8 @@ import com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos.BistAssetDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos.CollectApiBistDataDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts.FinancialAssetDailyMarketProfitService;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -24,6 +26,10 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
         return bistApi.getBistApiResponse().getResult();
 
     }
+    public void printToConsole(){
+        System.out.println("consola yaziyorum");
+    }
+
     public BigDecimal getSomeValueTrying(){
         List<BistAssetDto> list = fetchDataFromApi();
         BigDecimal value = BigDecimal.valueOf(0);
