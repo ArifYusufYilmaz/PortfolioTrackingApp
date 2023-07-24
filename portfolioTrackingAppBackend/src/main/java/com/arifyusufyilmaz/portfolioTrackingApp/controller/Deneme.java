@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("/deneme")
 public class Deneme {
@@ -17,7 +19,7 @@ public class Deneme {
 
     @GetMapping
     public void getResponse(){
-        double value = financialAssetDailyMarketProfitService.getSomeValueTrying();
+        BigDecimal value = financialAssetDailyMarketProfitService.getSomeValueTrying();
         System.out.println(value);
 
     }

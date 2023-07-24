@@ -4,6 +4,7 @@ import com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos.CollectApiBis
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -19,6 +20,8 @@ public class BistApiImpl {
     public BistApiImpl(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
+
+    @Cacheable(value = "bistdatas")
     public CollectApiBistDataDto getBistApiResponse(){
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -5,6 +5,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class BistAssetDto {
@@ -12,8 +13,8 @@ public class BistAssetDto {
     private String currency;
     private String name;
     private String pricestr;
-    private double price;
-    private double rate;
+    private BigDecimal price;
+    private BigDecimal rate;
     private String time;
 
 
@@ -42,19 +43,19 @@ public class BistAssetDto {
         this.pricestr = pricestr;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 
-    public double getRate() {
+    public BigDecimal getRate() {
         return rate;
     }
 
-    public void setRate(double rate) {
+    public void setRate(BigDecimal rate) {
         this.rate = rate;
     }
 

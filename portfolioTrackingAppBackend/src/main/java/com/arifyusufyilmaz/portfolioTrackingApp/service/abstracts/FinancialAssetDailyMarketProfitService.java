@@ -1,5 +1,7 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts;
 
+import java.math.BigDecimal;
+
 public interface FinancialAssetDailyMarketProfitService {
-     double getSomeValueTrying();
+     BigDecimal getSomeValueTrying();
 }
