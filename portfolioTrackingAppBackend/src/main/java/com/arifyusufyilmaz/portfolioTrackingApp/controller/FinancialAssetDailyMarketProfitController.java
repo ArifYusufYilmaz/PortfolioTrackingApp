@@ -23,9 +23,9 @@ public class FinancialAssetDailyMarketProfitController {
     }
 
     @GetMapping
-    @Scheduled(cron = "0 * * * * *")
+   // @Scheduled(cron = "0 * * * * *")
     private void doIt(){
-        List<FinancialAssetResponseDto> faR =  financialAssetService.getAllFinancialAssets(1L);
+        List<FinancialAssetResponseDto> faR =  financialAssetService.getAllFinancialAssets();
 
         faR.forEach( f -> financialAssetDailyMarketProfitService.generateDailyProfits(f.getId()) );
         System.out.println("bittim");

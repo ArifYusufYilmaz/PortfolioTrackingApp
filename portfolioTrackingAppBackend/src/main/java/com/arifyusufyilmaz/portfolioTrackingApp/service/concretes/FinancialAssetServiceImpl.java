@@ -51,8 +51,9 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
         generateFinancialAssetTransaction(financialAsset, new DepositFinancialAssetTransaction(financialAssetSaveDto.getAssetSymbol(),
                 financialAssetSaveDto.getAssetQuantity(),
                 financialAssetSaveDto.getAssetCost()));
-
-        setCostAndQuantityAfterAdditionalBuying(financialAsset,financialAssetSaveDto);
+        if(financialAssetOpt.isPresent()){
+            setCostAndQuantityAfterAdditionalBuying(financialAsset,financialAssetSaveDto);
+        }
 
         return FinancialAssetMapper
                                    .INSTANCE
@@ -84,9 +85,16 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
     }
 
     @Override
-    public List<FinancialAssetResponseDto> getAllFinancialAssets(Long portfolioId) {
+    public List<FinancialAssetResponseDto> getAllFinancialAssetsByPortfolioId(Long portfolioId) {
         // TODO check
         List<FinancialAsset> financialAssets =  this.financialAssetDao.findAllByPortfolioId(portfolioId);
+        return FinancialAssetMapper.INSTANCE.mapFinancialAssetListToFinancialAssetResponseDtoList(financialAssets);
+
+    }
+    @Override
+    public List<FinancialAssetResponseDto> getAllFinancialAssets() {
+        // TODO check
+        List<FinancialAsset> financialAssets =  this.financialAssetDao.findAll();
         return FinancialAssetMapper.INSTANCE.mapFinancialAssetListToFinancialAssetResponseDtoList(financialAssets);
 
     }

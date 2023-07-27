@@ -29,7 +29,7 @@ public class FinancialAssetController {
     }
     @GetMapping("/all/{portfolioId}")
     public List<FinancialAssetResponseDto> getAllFinancialAssets(@PathVariable Long portfolioId){
-        return this.financialAssetService.getAllFinancialAssets(portfolioId);
+        return this.financialAssetService.getAllFinancialAssetsByPortfolioId(portfolioId);
     }
     // TODO : other stuff(owningcost calculations etc).
 

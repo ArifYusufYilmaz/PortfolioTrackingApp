@@ -8,7 +8,8 @@ import java.util.List;
 public interface FinancialAssetService {
     FinancialAssetResponseDto buyFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto);
 
-    List<FinancialAssetResponseDto> getAllFinancialAssets(Long portfolioId);
+    List<FinancialAssetResponseDto> getAllFinancialAssetsByPortfolioId(Long portfolioId);
+    List<FinancialAssetResponseDto> getAllFinancialAssets();
 
     FinancialAssetResponseDto sellFinancialAsset(Long portfolioId, FinancialAssetSaveDto financialAssetSaveDto);
 }
