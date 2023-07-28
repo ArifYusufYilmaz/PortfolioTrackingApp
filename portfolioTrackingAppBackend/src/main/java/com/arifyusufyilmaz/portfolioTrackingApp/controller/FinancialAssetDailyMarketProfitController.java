@@ -24,11 +24,12 @@ public class FinancialAssetDailyMarketProfitController {
 
     @GetMapping
    // @Scheduled(cron = "0 * * * * *")
-    private void doIt(){
-        List<FinancialAssetResponseDto> faR =  financialAssetService.getAllFinancialAssets();
+    private void getFinancialAssetDailyMarketProfit(){
+        System.out.println("fa calisti");
+        List<FinancialAssetResponseDto> financialAssetResponseDtoList =  financialAssetService.getAllFinancialAssets();
 
-        faR.forEach( f -> financialAssetDailyMarketProfitService.generateDailyProfits(f.getId()) );
-        System.out.println("bittim");
+        financialAssetResponseDtoList.forEach( f -> financialAssetDailyMarketProfitService.generateDailyProfits(f.getId()));
+
     }
 
 }

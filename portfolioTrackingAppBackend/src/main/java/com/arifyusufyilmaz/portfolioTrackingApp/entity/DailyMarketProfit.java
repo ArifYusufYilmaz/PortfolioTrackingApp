@@ -1,6 +1,7 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.entity;
 
 import jakarta.persistence.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,10 +14,16 @@ public abstract class DailyMarketProfit {
     @SequenceGenerator(name = "DailyMarketProfit", sequenceName = "DAILY_MARKET_PROFIT_ID_SEQ")
     private Long id;
 
+    @CreatedDate
     private Date marketTransactionDate;
     private BigDecimal marketProfitAsTurkishLira;
     private BigDecimal marketProfitAsPercentage;
     private BigDecimal marketTotalValue;
+
+    @PrePersist
+    protected void prePersist(){
+        if(this.marketTransactionDate == null) marketTransactionDate = new Date();
+    }
 
 
 

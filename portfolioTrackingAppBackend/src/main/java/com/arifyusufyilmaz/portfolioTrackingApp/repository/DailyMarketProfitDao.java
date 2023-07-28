@@ -10,4 +10,5 @@ import java.util.Optional;
 public interface DailyMarketProfitDao extends JpaRepository<DailyMarketProfit, Long> {
 
     Optional<FinancialAssetDailyMarketProfit> findByFinancialAsset_IdAndMarketTransactionDate(Long financialAssetId, Date marketTransactionDate);
+     Optional<FinancialAssetDailyMarketProfit> findFirstByFinancialAssetIdOrderByMarketTransactionDateDesc(Long financialAssetId);
 }
