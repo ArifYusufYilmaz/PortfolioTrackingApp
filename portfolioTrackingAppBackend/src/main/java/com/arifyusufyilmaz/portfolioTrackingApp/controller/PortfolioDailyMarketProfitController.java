@@ -21,7 +21,7 @@ public class PortfolioDailyMarketProfitController {
     public void getPortfolioDailyMarketProfit(){
         //TODO
         System.out.println("portfolio calisti");
-        portfolioDailyMarketService.generatePortfolioDailyMarketProfit(102L);
+        portfolioDailyMarketService.generatePortfolioDailyMarketProfit(202L);
 
     }
 }
