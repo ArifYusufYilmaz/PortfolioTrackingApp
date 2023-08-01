@@ -18,6 +18,17 @@ public class User
     private String userEmail;
     private String userPassword;
 
+    public User() {
+    }
+
+    public User(Long id, String userFirstName, String userLastName, String userEmail, String userPassword) {
+        this.id = id;
+        this.userFirstName = userFirstName;
+        this.userLastName = userLastName;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+    }
+
     @OneToMany(mappedBy = "user")
     private List<Portfolio> portfolios;
 

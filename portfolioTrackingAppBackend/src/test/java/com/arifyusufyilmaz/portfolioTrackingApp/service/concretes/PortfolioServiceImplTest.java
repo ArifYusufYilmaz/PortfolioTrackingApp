@@ -4,10 +4,8 @@ import com.arifyusufyilmaz.portfolioTrackingApp.converter.PortfolioMapper;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioCreditDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioDebitDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioResponseDto;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.PortfolioTransaction;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.WithdrawalFinancialAssetTransaction;
-import com.arifyusufyilmaz.portfolioTrackingApp.entity.WithdrawalPortfolioTransaction;
+import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioSaveDto;
+import com.arifyusufyilmaz.portfolioTrackingApp.entity.*;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.PortfolioDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.TransactionDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.UserDao;
@@ -44,11 +42,25 @@ class PortfolioServiceImplTest {
     private PortfolioServiceImpl portfolioServiceImpl;
     @Test
     void createPortfolio() {
+        //given  user,portfolio, portfoliosavedto
+        User user = new User(1L,"Yusuf","Yılmaz","arif@gmail.com","1234");
+        PortfolioSaveDto portfolioSaveDto  =  Mockito.mock(PortfolioSaveDto.class);
+        Mockito.when(portfolioSaveDto.getPortfolioName()).thenReturn("Portföy");
+        //portfolioSaveDto.setPortfolioName("Portföy");
+        Portfolio portfolio = new Portfolio();
+        portfolio.setUser(user);
 
+        //when
+        Mockito.when(userDao.findById(anyLong())).thenReturn(Optional.of(user));
+        Mockito.when(portfolioDao.save(any(Portfolio.class))).thenReturn(portfolio);
+        //then
+        PortfolioResponseDto portfolioResponseDto = portfolioServiceImpl.createPortfolio(1L, portfolioSaveDto);
+        assertEquals("Portföy",portfolioResponseDto.getPortfolioName());
     }
 
     @Test
     void getAllPortfolios() {
+        //given
 
     }
 
@@ -88,6 +100,22 @@ class PortfolioServiceImplTest {
     }
 
     @Test
-    void credit() {
+    void shouldReturnPortfolioResponseDtoWithAddedValueOfPortfolioAmountWhileCrediting() {
+        // given
+        BigDecimal initialPortfolioAmount = BigDecimal.valueOf(4000);
+        BigDecimal creditAmount = BigDecimal.valueOf(2500);
+
+        PortfolioCreditDto portfolioCreditDto = new PortfolioCreditDto();
+        portfolioCreditDto.setCashAmount(creditAmount);
+
+        Portfolio portfolio = new Portfolio(2L,"Portföy", initialPortfolioAmount);
+        // when
+        Mockito.when(portfolioDao.findById(anyLong())).thenReturn(Optional.of(portfolio));
+        Mockito.when(portfolioDao.save(any(Portfolio.class))).thenReturn(portfolio);
+        // then
+        PortfolioResponseDto portfolioResponseDto = portfolioServiceImpl.credit(2L, portfolioCreditDto);
+        assertEquals(BigDecimal.valueOf(6500), portfolioResponseDto.getPortfolioAvailableCash());
+
+
     }
 }
