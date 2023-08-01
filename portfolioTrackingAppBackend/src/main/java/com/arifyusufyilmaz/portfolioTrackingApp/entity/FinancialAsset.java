@@ -22,6 +22,19 @@ public class FinancialAsset {
 
     private Date assetOwningDate; //TODO
 
+    public FinancialAsset() {
+    }
+
+    public FinancialAsset(Long id, String assetName, String assetSymbol, BigDecimal assetQuantity, BigDecimal assetCost, Date assetOwningDate, Portfolio portfolio) {
+        this.id = id;
+        this.assetName = assetName;
+        this.assetSymbol = assetSymbol;
+        this.assetQuantity = assetQuantity;
+        this.assetCost = assetCost;
+        this.assetOwningDate = assetOwningDate;
+        this.portfolio = portfolio;
+    }
+
     @ManyToOne
     private Portfolio portfolio;
 

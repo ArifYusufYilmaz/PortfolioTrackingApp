@@ -11,6 +11,7 @@ import com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts.FinancialAsset
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 
 @Service
@@ -116,7 +117,7 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
         BigDecimal additionalBuyingCost = financialAssetSaveDto.getAssetQuantity().multiply(financialAssetSaveDto.getAssetCost());
         BigDecimal totalOwningCost = previousOwningCost.add(additionalBuyingCost);
 
-         return totalOwningCost.divide(assetQuantity);
+         return totalOwningCost.divide(assetQuantity, 2, RoundingMode.HALF_UP);
     }
     private BigDecimal calculateQuantityAfterAdditionalBuying(FinancialAsset financialAsset,FinancialAssetSaveDto financialAssetSaveDto){
         return  financialAsset.getAssetQuantity().add(financialAssetSaveDto.getAssetQuantity());
