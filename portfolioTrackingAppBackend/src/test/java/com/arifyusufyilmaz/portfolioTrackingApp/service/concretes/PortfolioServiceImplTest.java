@@ -41,7 +41,7 @@ class PortfolioServiceImplTest {
     @InjectMocks
     private PortfolioServiceImpl portfolioServiceImpl;
     @Test
-    void createPortfolio() {
+    void shouldReturnPortfolioResponseDtoWhileCreatingPortfolio() {
         //given  user,portfolio, portfoliosavedto
         User user = new User(1L,"Yusuf","Yılmaz","arif@gmail.com","1234");
         PortfolioSaveDto portfolioSaveDto  =  Mockito.mock(PortfolioSaveDto.class);
