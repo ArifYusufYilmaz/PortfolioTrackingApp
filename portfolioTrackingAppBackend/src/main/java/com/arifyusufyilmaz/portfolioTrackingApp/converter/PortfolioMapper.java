@@ -4,6 +4,7 @@ import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioResponseDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.PortfolioSaveDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import org.mapstruct.factory.Mappers;
 
@@ -14,6 +15,7 @@ public interface PortfolioMapper {
     PortfolioMapper INSTANCE = Mappers.getMapper(PortfolioMapper.class);
 
     Portfolio mapPortfolioSaveDtoToPortfolio(PortfolioSaveDto portfolioSaveDto);
+    @Mapping(source = "portfolioCashBalance",target = "portfolioAvailableCash")
     PortfolioResponseDto mapPortfolioToPortfolioResponseDto(Portfolio portfolio);
     List<PortfolioResponseDto> mapPortfolioListToPortfolioResponseDtoList(List<Portfolio> portfolioList);
 }

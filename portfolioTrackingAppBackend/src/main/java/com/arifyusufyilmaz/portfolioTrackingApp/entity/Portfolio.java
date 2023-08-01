@@ -30,6 +30,12 @@ public class Portfolio {
         this.portfolioCashBalance = BigDecimal.valueOf(0);
     }
 
+    public Portfolio(Long id, String portfolioName, BigDecimal portfolioCashBalance) {
+        this.id = id;
+        this.portfolioName = portfolioName;
+        this.portfolioCashBalance = portfolioCashBalance;
+    }
+
     public BigDecimal debit(BigDecimal amount){
         // portfoliocashbalance is null at first!
         if (getPortfolioCashBalance().compareTo(amount) < 0) {

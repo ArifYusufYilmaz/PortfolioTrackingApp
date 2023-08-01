@@ -14,7 +14,6 @@ import java.util.Optional;
 @Service
 public class PortfolioDailyMarketServiceImpl implements PortfolioDailyMarketService {
     private final DailyMarketProfitDao dailyMarketProfitDao;
-
     private final PortfolioDao portfolioDao;
 
     public PortfolioDailyMarketServiceImpl(DailyMarketProfitDao dailyMarketProfitDao, PortfolioDao portfolioDao) {
