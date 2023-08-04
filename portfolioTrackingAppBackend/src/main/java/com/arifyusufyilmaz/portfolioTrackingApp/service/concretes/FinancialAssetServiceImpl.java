@@ -143,4 +143,8 @@ public class FinancialAssetServiceImpl implements FinancialAssetService {
         financialAsset.setAssetCost(calculateCostAfterSelling(financialAsset, financialAssetSaveDto, quantity));
         financialAsset.setAssetQuantity(quantity);
     }
+
+
+
+
 }

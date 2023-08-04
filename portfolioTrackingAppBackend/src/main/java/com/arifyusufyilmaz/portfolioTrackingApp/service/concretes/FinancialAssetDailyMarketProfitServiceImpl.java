@@ -1,23 +1,29 @@
 package com.arifyusufyilmaz.portfolioTrackingApp.service.concretes;
 
+import com.arifyusufyilmaz.portfolioTrackingApp.dto.RatioOfAssetToPortfolioDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos.BistAssetDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.dto.collectApiDtos.CollectApiBistDataDto;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.DailyMarketProfit;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAsset;
 import com.arifyusufyilmaz.portfolioTrackingApp.entity.FinancialAssetDailyMarketProfit;
+import com.arifyusufyilmaz.portfolioTrackingApp.entity.Portfolio;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.DailyMarketProfitDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.repository.FinancialAssetDao;
+import com.arifyusufyilmaz.portfolioTrackingApp.repository.PortfolioDao;
 import com.arifyusufyilmaz.portfolioTrackingApp.service.abstracts.FinancialAssetDailyMarketProfitService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.sound.sampled.Port;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAssetDailyMarketProfitService {
@@ -25,12 +31,14 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
 
     private final DailyMarketProfitDao dailyMarketProfitDao;
     private final FinancialAssetDao financialAssetDao;
+    private final PortfolioDao portfolioDao;
     private int count = 0;
 
-    public FinancialAssetDailyMarketProfitServiceImpl(BistApiImpl bistApi, DailyMarketProfitDao dailyMarketProfitDao, FinancialAssetDao financialAssetDao) {
+    public FinancialAssetDailyMarketProfitServiceImpl(BistApiImpl bistApi, DailyMarketProfitDao dailyMarketProfitDao, FinancialAssetDao financialAssetDao, PortfolioDao portfolioDao) {
         this.bistApi = bistApi;
         this.dailyMarketProfitDao = dailyMarketProfitDao;
         this.financialAssetDao = financialAssetDao;
+        this.portfolioDao = portfolioDao;
     }
 
     private List<BistAssetDto> fetchDataFromApi(){
@@ -103,6 +111,85 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
         return financialAsset.get();
     }
 
+    // financialAssetQuantity*cost(ShareCost), <- addingAllwithPortfolioCash(PortfolioCost) ,
+    // financialAssetQuantyiy*currentPrice(ShareValue), <-addingAllwithPortfolioCash(PortfolioValue)
+    // ShareCost / portfolioCost * 100
+    // portfolioValue / sharevalue * 100
+
+
+    public List<RatioOfAssetToPortfolioDto> retrieveRatioOfAssetsToPortfolioThroughLatestAmount(Long portfolioId){
+        Portfolio portfolio =  checkAndGetIfPortfolioExist(portfolioId);
+         return calculateRatioOfAssetsAsLatestAmount(portfolio);
+    }
+    public List<RatioOfAssetToPortfolioDto> retrieveRatioOfAssetsToPortfolioThroughOwningCost(Long portfolioId){
+        Portfolio portfolio =  checkAndGetIfPortfolioExist(portfolioId);
+        return calculateRatioOfAssetsAsOwningCost(portfolio);
+    }
+
+
+    private Portfolio checkAndGetIfPortfolioExist(Long id){
+        Optional<Portfolio> portfolioOpt = portfolioDao.findById(id);
+        if (!portfolioOpt.isPresent()) {
+            //throw
+        }
+        return portfolioOpt.get();
+    }
+
+    private BigDecimal calculateOwningCost(FinancialAsset financialAsset){
+        return financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+    }
+    private BigDecimal calculateLatestFinancialAssetAmount(FinancialAsset financialAsset){
+        Optional<FinancialAssetDailyMarketProfit> financialAssetDailyMarketProfit = dailyMarketProfitDao.findFirstByFinancialAssetIdOrderByMarketTransactionDateDesc(financialAsset.getId());
+        if(financialAssetDailyMarketProfit.isPresent()){
+            //financialAssetDailyMarketProfit.get().getMarketTotalValue();
+            return financialAsset.getAssetQuantity().multiply(financialAssetDailyMarketProfit.get().getCurrentPrice());
+        }
+
+        return financialAsset.getAssetQuantity().multiply(financialAsset.getAssetCost());
+    }
+    private BigDecimal calculateTotalPortfolioAmountThroughOwningCostsAndCashBalance(Portfolio portfolio){
+        BigDecimal totalOwningCost = portfolio.getFinancialAssets().stream().map(fA -> calculateOwningCost(fA)).reduce(BigDecimal.ZERO,BigDecimal::add);
+        return portfolio.getPortfolioCashBalance().add(totalOwningCost);
+    }
+    private BigDecimal calculateLatestPortfolioAmount(Portfolio portfolio){
+        BigDecimal latestTotalAssetAmount = portfolio.getFinancialAssets().stream().map(fA -> calculateLatestFinancialAssetAmount(fA)).reduce(BigDecimal.ZERO, BigDecimal::add);
+        return portfolio.getPortfolioCashBalance().add(latestTotalAssetAmount);
+    }
+    private BigDecimal calculateRatioThroughOwningCost(FinancialAsset financialAsset, Portfolio portfolio){
+        return calculateOwningCost(financialAsset)
+                .divide(calculateTotalPortfolioAmountThroughOwningCostsAndCashBalance(portfolio), 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+
+    }
+    private BigDecimal calculateRatioThroughLatestAmount(FinancialAsset financialAsset, Portfolio portfolio){
+        return calculateLatestFinancialAssetAmount(financialAsset)
+                .divide(calculateLatestPortfolioAmount(portfolio), 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+    }
+
+    private List<RatioOfAssetToPortfolioDto> calculateRatioOfAssetsAsOwningCost(Portfolio portfolio){
+        List<RatioOfAssetToPortfolioDto> ratioOfAssetToPortfolioDtoList = portfolio
+                 .getFinancialAssets()
+                 .stream()
+                 .map(fA -> {
+            BigDecimal ratio = calculateRatioThroughOwningCost(fA, portfolio);
+            String symbol = fA.getAssetSymbol();
+            return new RatioOfAssetToPortfolioDto(symbol, ratio);
+        }).collect(Collectors.toList());
+        return ratioOfAssetToPortfolioDtoList;
+    }
+    private List<RatioOfAssetToPortfolioDto> calculateRatioOfAssetsAsLatestAmount(Portfolio portfolio){
+        List<RatioOfAssetToPortfolioDto> ratioOfAssetToPortfolioDtoList = portfolio
+                .getFinancialAssets()
+                .stream()
+                .map(fA -> {
+                    BigDecimal ratio = calculateRatioThroughLatestAmount(fA, portfolio);
+                    String symbol = fA.getAssetSymbol();
+                    return new RatioOfAssetToPortfolioDto(symbol, ratio);
+                }).collect(Collectors.toList());
+        return ratioOfAssetToPortfolioDtoList;
+    }
+
 
     public BigDecimal getSomeValueTrying(){
         List<BistAssetDto> list = fetchDataFromApi();
@@ -143,5 +230,8 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
         list.add(data2);
         return list;
     }
+
+
+
 
 }

@@ -21,6 +21,7 @@ public class PortfolioDailyMarketServiceImpl implements PortfolioDailyMarketServ
         this.portfolioDao = portfolioDao;
     }
 
+
     @Override
     public void generatePortfolioDailyMarketProfit(Long portfolioId) {
         Optional<Portfolio> portfolioOpt = this.portfolioDao.findById(portfolioId);
@@ -28,12 +29,8 @@ public class PortfolioDailyMarketServiceImpl implements PortfolioDailyMarketServ
         // todo throw
         }
 
-        BigDecimal marketTotalValue =  portfolioOpt.get().getFinancialAssets()
-                .stream()
-                .map(fA-> this.dailyMarketProfitDao.findFirstByFinancialAssetIdOrderByMarketTransactionDateDesc(fA.getId()).get().getMarketTotalValue())
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal marketTotalValue = getMarketTotalValueFromDb(portfolioOpt.get());
 
-        // tarihe göre sıralayıp son total value yu almak gerek.
          BigDecimal dailyProfit = calculateDailyProfitAsTry(portfolioOpt.get(), marketTotalValue);
          savePortfolioDailyMarketProfit(portfolioOpt.get(), marketTotalValue, dailyProfit);
     }
@@ -59,4 +56,17 @@ public class PortfolioDailyMarketServiceImpl implements PortfolioDailyMarketServ
         portfolioDailyMarketProfit.setMarketProfitAsTurkishLira(dailyProfit);
        return this.dailyMarketProfitDao.save(portfolioDailyMarketProfit);
     }
+    private BigDecimal getMarketTotalValueFromDb(Portfolio portfolio){
+
+        // tarihe göre sıralayıp son total value yu almak gerek.
+        BigDecimal marketTotalValue =  portfolio.getFinancialAssets()
+                .stream()
+                .map(fA-> this.dailyMarketProfitDao.findFirstByFinancialAssetIdOrderByMarketTransactionDateDesc(fA.getId()).get().getMarketTotalValue())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return marketTotalValue;
+    }
+
+
+
+
 }
