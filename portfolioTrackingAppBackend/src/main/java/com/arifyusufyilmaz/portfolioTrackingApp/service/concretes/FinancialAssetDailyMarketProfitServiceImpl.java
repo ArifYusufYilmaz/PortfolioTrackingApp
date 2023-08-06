@@ -158,13 +158,23 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
     private BigDecimal calculateRatioThroughOwningCost(FinancialAsset financialAsset, Portfolio portfolio){
         return calculateOwningCost(financialAsset)
                 .divide(calculateTotalPortfolioAmountThroughOwningCostsAndCashBalance(portfolio), 2, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100));
+                .multiply(BigDecimal.valueOf(100)).setScale(2,RoundingMode.HALF_UP);
 
     }
     private BigDecimal calculateRatioThroughLatestAmount(FinancialAsset financialAsset, Portfolio portfolio){
         return calculateLatestFinancialAssetAmount(financialAsset)
                 .divide(calculateLatestPortfolioAmount(portfolio), 2, RoundingMode.HALF_UP)
-                .multiply(BigDecimal.valueOf(100));
+                .multiply(BigDecimal.valueOf(100)).setScale(2,RoundingMode.HALF_UP);
+    }
+    private BigDecimal calculateRatioOfCashThroughOwningCost(Portfolio portfolio){
+        return  portfolio.getPortfolioCashBalance()
+                .divide(calculateTotalPortfolioAmountThroughOwningCostsAndCashBalance(portfolio), 2, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)).setScale(2,RoundingMode.HALF_UP);
+    }
+    private BigDecimal calculateRatioOfCashThroughLatestAmount(Portfolio portfolio){
+        return portfolio.getPortfolioCashBalance()
+                .divide(calculateLatestPortfolioAmount(portfolio),2,RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)).setScale(2,RoundingMode.HALF_UP);
     }
 
     private List<RatioOfAssetToPortfolioDto> calculateRatioOfAssetsAsOwningCost(Portfolio portfolio){
@@ -176,6 +186,7 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
             String symbol = fA.getAssetSymbol();
             return new RatioOfAssetToPortfolioDto(symbol, ratio);
         }).collect(Collectors.toList());
+        ratioOfAssetToPortfolioDtoList.add(new RatioOfAssetToPortfolioDto("cash", calculateRatioOfCashThroughOwningCost(portfolio)));
         return ratioOfAssetToPortfolioDtoList;
     }
     private List<RatioOfAssetToPortfolioDto> calculateRatioOfAssetsAsLatestAmount(Portfolio portfolio){
@@ -187,6 +198,8 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
                     String symbol = fA.getAssetSymbol();
                     return new RatioOfAssetToPortfolioDto(symbol, ratio);
                 }).collect(Collectors.toList());
+
+        ratioOfAssetToPortfolioDtoList.add(new RatioOfAssetToPortfolioDto("cash",calculateRatioOfCashThroughLatestAmount(portfolio)));
         return ratioOfAssetToPortfolioDtoList;
     }
 
@@ -220,7 +233,7 @@ public class FinancialAssetDailyMarketProfitServiceImpl implements FinancialAsse
         data1.setTime("14:13:44");
         BistAssetDto data2 = new BistAssetDto();
         data2.setCurrency("TRY");
-        data2.setName("ASTOR");
+        data2.setName("ASELS");
         data2.setPricestr("106.70");
         data2.setPrice(BigDecimal.valueOf(106.7));
         data2.setRate(BigDecimal.valueOf(10));
